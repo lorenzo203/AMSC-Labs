@@ -2,7 +2,7 @@
 #define HAVE_TEST_MATRIX_MULT_H
 
 #ifndef msize
-#define msize 500
+#define msize 2000
 #endif
 
 #include <ctime>

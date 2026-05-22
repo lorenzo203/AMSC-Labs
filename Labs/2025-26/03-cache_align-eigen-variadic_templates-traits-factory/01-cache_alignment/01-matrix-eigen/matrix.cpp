@@ -3,17 +3,18 @@
 #include <algorithm>
 #include <cassert>
 #include <ctime>
-
+#include <Eigen/Dense>
 
 
 matrix
 matrix::transpose() const
 {
-  matrix ret (get_cols(), get_rows());
-  for (size_t i = 0; i < ret.get_rows() ; ++i)//increments i in place
-    for (size_t j=0; j< ret.get_cols(); ++j)
-      ret(i,j) = value(j,i);
-  return ret;
+  matrix A_tp(*this);//A_tp is the current matrix considered
+  Eigen::Map<Eigen::MatrixXd> eigen_ret(A_tp.get_data(), A_tp.get_rows(), A_tp.get_cols());
+  eigen_ret.transposeInPlace();
+  return A_tp;//this returns the transpose since
+  //we are transposing the eigen matrix in place,
+  //which is initialized using A_tp(*this)
 }
 
 //C = A * B the dimensions must be consinsent

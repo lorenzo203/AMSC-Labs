@@ -26,8 +26,8 @@ class Root_finder{
     double current_root_estimate;
     type_fun function_root;
     int max_iter;
-    double rtol;
-    double stol;
+    double rtol; //residual tolerance
+    double stol; //solution tolerance
     int iter = 0;
     double residual;
     double delta_x;
@@ -48,7 +48,14 @@ class Newton: public Root_finder{
     double solve() override 
     { 
         // Implement here the method!
-        current_root_estimate = 0.;
+        current_root_estimate = initial_guess;
+        do
+        {
+            delta_x = function_root(current_root_estimate)/der_fun(current_root_estimate);
+            current_root_estimate -= delta_x;
+            xs.push_back(current_root_estimate);
+            residual = abs(function_root(current_root_estimate));
+        } while (++iter<max_iter && abs(delta_x)>stol && residual>rtol);
         return(current_root_estimate); 
     };
     constexpr virtual const char *getName() override { return (is_Newton ? "Newton" : "Secant"); };
@@ -65,7 +72,21 @@ class Bisection: public Root_finder{
     double solve() override 
     { 
         // Implement here the method!
-        current_root_estimate = 0.;
+        current_root_estimate = initial_guess;
+        if (function_root(a)*function_root(b)>0.0){
+            cout<<"Error: could not implement the Bisection Method" << endl;
+            return 1;
+        }
+        do
+        {
+            current_root_estimate = 0.5*(a+b);
+            // Bolzano theorem
+            a = function_root(current_root_estimate)*function_root(a) < 0 ? current_root_estimate : a;
+            b = function_root(current_root_estimate)*function_root(b) < 0 ? current_root_estimate : b;
+            delta_x = abs(a-b);
+            xs.push_back(current_root_estimate);
+            residual = abs(function_root(current_root_estimate));
+        } while(++iter < max_iter && delta_x > stol && residual > rtol);
         return(current_root_estimate); 
     };
     constexpr virtual const char *getName() override { return "Bisection"; };

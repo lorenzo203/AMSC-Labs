@@ -17,12 +17,23 @@ public:
   /// Default constructor.
   JacobianBase() = default;
 
-  /// Solve J(x) * delta_x = res.
+  /// Solve J(x) * delta_x = residual.
   virtual T::VariableType
   solve(const T::VariableType &x, const T::VariableType &res) const = 0;
 
   /// Destructor. Needed since this is a pure virtual class.
   virtual ~JacobianBase() = default;
+};
+
+class FullJacobian final : public JacobianBase
+{
+  private:
+    T::JacobianFunctionType jac;
+  
+  public:
+    FullJacobian(T::JacobianFunctionType & _jac):jac(_jac){};
+    virtual T::VariableType
+    solve(const T::VariableType &x, const T::VariableType &res) const override;
 };
 
 #endif /* JACOBIAN_HPP */
